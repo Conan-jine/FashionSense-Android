@@ -6,7 +6,6 @@ namespace FashionSense.Framework.Models.Appearances.Generic
     {
         public string Name { get; set; }
         public bool IgnoreUserColorChoice { get; set; }
-        public int[] DefaultColor { get; set; }
         public List<int[]> Values { get; set; }
     }
 }

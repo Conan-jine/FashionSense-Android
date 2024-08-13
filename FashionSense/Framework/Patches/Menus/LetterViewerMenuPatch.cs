@@ -29,7 +29,7 @@ namespace FashionSense.Framework.Patches.Menus
         {
             if (mailTitle.Equals(ModDataKeys.LETTER_HAND_MIRROR, StringComparison.OrdinalIgnoreCase) && fromCollection is false)
             {
-                __instance.itemsToGrab.Add(new ClickableComponent(new Rectangle(__instance.xPositionOnScreen + __instance.width / 2 - 48, __instance.yPositionOnScreen + __instance.height - 32 - 96, 96, 96), ShopBuilderPatch.GetHandMirrorTool())
+                __instance.itemsToGrab.Add(new ClickableComponent(new Rectangle(__instance.xPositionOnScreen + __instance.width / 2 - 48, __instance.yPositionOnScreen + __instance.height - 32 - 96, 96, 96), SeedShopPatch.GetHandMirrorTool())
                 {
                     myID = 104,
                     leftNeighborID = 101,
@@ -43,18 +43,16 @@ namespace FashionSense.Framework.Patches.Menus
         [HarmonyPriority(Priority.High)]
         private static bool ReceiveLeftClickPrefix(LetterViewerMenu __instance, int x, int y, bool playSound = true)
         {
-            if (__instance is not null && __instance.ShouldShowInteractable())
+            foreach (ClickableComponent c in __instance.itemsToGrab)
             {
-                foreach (ClickableComponent c in __instance.itemsToGrab)
+                if (c.containsPoint(x, y) && c.item is not null && c.item.modData.ContainsKey(ModDataKeys.HAND_MIRROR_FLAG))
                 {
-                    if (c.containsPoint(x, y) && c.item is not null && c.item.modData.ContainsKey(ModDataKeys.HAND_MIRROR_FLAG))
-                    {
-                        Game1.playSound("coin");
-                        Game1.player.addItemToInventory(c.item);
-                        c.item = null;
-                    }
+                    Game1.playSound("coin");
+                    Game1.player.addItemToInventory(c.item);
+                    c.item = null;
                 }
             }
+            
 
             return true;
         }

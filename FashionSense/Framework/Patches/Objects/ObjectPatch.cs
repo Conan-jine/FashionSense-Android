@@ -37,12 +37,12 @@ namespace FashionSense.Framework.Patches.Objects
                         throw new System.Exception("BetterArtisanGoodIcons.Patches.SObjectPatches.DrawWhenHeldPatch:Prefix not found");
                     }
 
-                    _monitor.Log($"Patched BAGI.DrawWhenHeldPatch successfully via {this.GetType().Name}", LogLevel.Trace);
+                    _monitor.Log("Patched BAGI.DrawWhenHeldPatch successfully via "+this.GetType().Name+"", LogLevel.Trace);
                 }
                 catch (System.Exception ex)
                 {
-                    _monitor.Log($"Failed to patch BAGI.DrawWhenHeldPatch in {this.GetType().Name}: This may cause certain BAGI objects to be drawn incorrectly when held", LogLevel.Warn);
-                    _monitor.Log($"Patch for BAGI.DrawWhenHeldPatch failed in {this.GetType().Name}: {ex}", LogLevel.Trace);
+                    _monitor.Log("Failed to patch BAGI.DrawWhenHeldPatch in "+this.GetType().Name+": This may cause certain BAGI objects to be drawn incorrectly when held", LogLevel.Warn);
+                    _monitor.Log("Patch for BAGI.DrawWhenHeldPatch failed in "+this.GetType().Name+": "+ex+"", LogLevel.Trace);
                 }
             }
         }
@@ -73,20 +73,14 @@ namespace FashionSense.Framework.Patches.Objects
             }
             catch (System.Exception e)
             {
-                _monitor.Log($"There was an issue modifying the instructions for StardewValley.Object.drawPlayerHeldObject: {e}", LogLevel.Error);
+                _monitor.Log("There was an issue modifying the instructions for StardewValley.Object.drawPlayerHeldObject: "+e+"", LogLevel.Error);
                 return instructions;
             }
         }
 
-        internal static float AdjustLayerDepthForHeldObjects(float layerDepth)
+        private static float AdjustLayerDepthForHeldObjects(float layerDepth)
         {
-            if (DrawPatch.lastCustomLayerDepth is null)
-            {
-                return layerDepth;
-            }
-
-            DrawPatch.lastCustomLayerDepth += 0.0001f;
-            return DrawPatch.lastCustomLayerDepth.Value;
+            return DrawPatch.lastCustomLayerDepth is null ? layerDepth : DrawPatch.lastCustomLayerDepth.Value + 0.0001f;
         }
     }
 }

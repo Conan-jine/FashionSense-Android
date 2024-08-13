@@ -103,7 +103,7 @@ namespace FashionSense.Framework.Utilities
 
         internal void OnRendered(object sender, RenderedEventArgs e)
         {
-            Utility.drawTextWithColoredShadow(e.SpriteBatch, $"Movement Speed: {GetMovementSpeed(Game1.player)}\nDuration: {GetMovementDuration(Game1.player)}", Game1.smallFont, new Vector2(10, 10), Color.LawnGreen, Color.Black, 1);
+            Utility.drawTextWithColoredShadow(e.SpriteBatch, "Movement Speed: "+GetMovementSpeed(Game1.player)+"\nDuration: "+GetMovementDuration(Game1.player)+"", Game1.smallFont, new Vector2(10, 10), Color.LawnGreen, Color.Black, 1);
         }
     }
 }

@@ -2,7 +2,6 @@
 using FashionSense.Framework.Managers;
 using FashionSense.Framework.Models.Appearances;
 using FashionSense.Framework.Models.Appearances.Accessory;
-using FashionSense.Framework.Models.Appearances.Body;
 using FashionSense.Framework.Models.Appearances.Hair;
 using FashionSense.Framework.Models.Appearances.Hat;
 using FashionSense.Framework.Models.Appearances.Pants;
@@ -38,7 +37,6 @@ namespace FashionSense.Framework.Patches.Renderer
         {
             harmony.Patch(AccessTools.Method(_entity, nameof(FarmerRenderer.ApplySleeveColor), new[] { typeof(string), typeof(Color[]), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(ApplySleeveColorPrefix)));
             harmony.Patch(AccessTools.Method(_entity, "ApplyShoeColor", new[] { typeof(string), typeof(Color[]) }), prefix: new HarmonyMethod(GetType(), nameof(ApplyShoeColorPrefix)));
-            harmony.Patch(AccessTools.Method(_entity, "ApplySkinColor", new[] { typeof(string), typeof(Color[]) }), prefix: new HarmonyMethod(GetType(), nameof(ApplySkinColorPrefix)));
             harmony.Patch(AccessTools.Method(_entity, nameof(FarmerRenderer.draw), new[] { typeof(SpriteBatch), typeof(FarmerSprite.AnimationFrame), typeof(int), typeof(Rectangle), typeof(Vector2), typeof(Vector2), typeof(float), typeof(int), typeof(Color), typeof(float), typeof(float), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(DrawPrefix)));
 
             harmony.CreateReversePatcher(AccessTools.Method(_entity, "executeRecolorActions", new[] { typeof(Farmer) }), new HarmonyMethod(GetType(), nameof(ExecuteRecolorActionsReversePatch))).Patch();
@@ -46,85 +44,10 @@ namespace FashionSense.Framework.Patches.Renderer
             harmony.CreateReversePatcher(AccessTools.Method(_entity, nameof(FarmerRenderer.draw), new[] { typeof(SpriteBatch), typeof(FarmerSprite.AnimationFrame), typeof(int), typeof(Rectangle), typeof(Vector2), typeof(Vector2), typeof(float), typeof(int), typeof(Color), typeof(float), typeof(float), typeof(Farmer) }), new HarmonyMethod(GetType(), nameof(DrawReversePatch))).Patch();
         }
 
-        private static bool ApplySkinColorPrefix(FarmerRenderer __instance, LocalizedContentManager ___farmerTextureManager, Texture2D ___baseTexture, NetInt ___skin, bool ____sickFrame, string texture_name, Color[] pixels)
-        {
-            // Since the game doesn't pass the farmer over to the native ApplyShoeColor method, we have to find it by matching the FarmerRender instance
-            Farmer who = Game1.player;
-            foreach (var farmer in Game1.getOnlineFarmers())
-            {
-                if (farmer.FarmerRenderer == __instance)
-                {
-                    who = farmer;
-                }
-            }
-
-            if (who.FarmerRenderer != __instance && Game1.activeClickableMenu is SearchMenu searchMenu && searchMenu is not null)
-            {
-                foreach (var fakeFarmer in searchMenu.fakeFarmers)
-                {
-                    if (fakeFarmer.FarmerRenderer == __instance)
-                    {
-                        who = fakeFarmer;
-                    }
-                }
-            }
-
-            var bodyColor = GetBodyColor(who);
-            if (bodyColor is null)
-            {
-                return true;
-            }
-
-            var darkestColor = new Color(107, 0, 58);
-            var mediumColor = new Color(224, 107, 101);
-            var lightestColor = new Color(249, 174, 137);
-
-            var isDoingVanillaOverride = false;
-            if (who.modData[ModDataKeys.CUSTOM_BODY_ID] == ModDataKeys.INTERNAL_COLOR_OVERRIDE_BODY_ID)
-            {
-                isDoingVanillaOverride = true;
-            }
-
-            SwapColorReversePatch(__instance, texture_name, pixels, 260, Utility.MultiplyColor(darkestColor, isDoingVanillaOverride ? bodyColor.Value : Color.Transparent));
-            SwapColorReversePatch(__instance, texture_name, pixels, 261, Utility.MultiplyColor(mediumColor, isDoingVanillaOverride ? bodyColor.Value : Color.Transparent));
-            SwapColorReversePatch(__instance, texture_name, pixels, 262, Utility.MultiplyColor(lightestColor, isDoingVanillaOverride ? bodyColor.Value : Color.Transparent));
-
-            return false;
-        }
-
-        private static Color? GetBodyColor(Farmer who)
-        {
-            var bodyColorKey = AppearanceModel.GetColorKey(IApi.Type.Player);
-            if (!who.modData.ContainsKey(bodyColorKey) || !who.modData.ContainsKey(ModDataKeys.CUSTOM_BODY_ID) || who.modData[ModDataKeys.CUSTOM_BODY_ID] is null || who.modData[ModDataKeys.CUSTOM_BODY_ID] == "None")
-            {
-                return null;
-            }
-            else if (who.modData.ContainsKey(ModDataKeys.CUSTOM_BODY_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<BodyContentPack>(who.modData[ModDataKeys.CUSTOM_BODY_ID]) is null)
-            {
-                return null;
-            }
-
-            if (!uint.TryParse(who.modData[bodyColorKey], out uint bodyColorValue))
-            {
-                bodyColorValue = who.hairstyleColor.Value.PackedValue;
-                who.modData[bodyColorKey] = bodyColorValue.ToString();
-            }
-
-            return new Color() { PackedValue = bodyColorValue };
-        }
-
         private static bool ApplyShoeColorPrefix(FarmerRenderer __instance, LocalizedContentManager ___farmerTextureManager, Texture2D ___baseTexture, NetInt ___skin, bool ____sickFrame, string texture_name, Color[] pixels)
         {
             // Since the game doesn't pass the farmer over to the native ApplyShoeColor method, we have to find it by matching the FarmerRender instance
             Farmer who = Game1.player;
-            foreach (var farmer in Game1.getOnlineFarmers())
-            {
-                if (farmer.FarmerRenderer == __instance)
-                {
-                    who = farmer;
-                }
-            }
-
             if (who.FarmerRenderer != __instance && Game1.activeClickableMenu is SearchMenu searchMenu && searchMenu is not null)
             {
                 foreach (var fakeFarmer in searchMenu.fakeFarmers)
@@ -146,10 +69,10 @@ namespace FashionSense.Framework.Patches.Renderer
                 return true;
             }
 
-            if (!uint.TryParse(who.modData[shoeColorKey], out uint shoeColorValue))
+            if (!uint.TryParse(Game1.player.modData[shoeColorKey], out uint shoeColorValue))
             {
-                shoeColorValue = who.hairstyleColor.Value.PackedValue;
-                who.modData[shoeColorKey] = shoeColorValue.ToString();
+                shoeColorValue = Game1.player.hairstyleColor.Value.PackedValue;
+                Game1.player.modData[shoeColorKey] = shoeColorValue.ToString();
             }
 
             var shoeColor = new Color() { PackedValue = shoeColorValue };
@@ -177,7 +100,7 @@ namespace FashionSense.Framework.Patches.Renderer
             ShirtModel shirtModel = null;
             if (who.modData.ContainsKey(ModDataKeys.CUSTOM_SHIRT_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<ShirtContentPack>(who.modData[ModDataKeys.CUSTOM_SHIRT_ID]) is ShirtContentPack sPack && sPack != null)
             {
-                shirtModel = sPack.GetShirtFromFacingDirection(who.FacingDirection);
+                shirtModel = sPack.GetShirtFromFacingDirection(who.facingDirection);
             }
 
             if (shirtModel is null)
@@ -187,7 +110,7 @@ namespace FashionSense.Framework.Patches.Renderer
 
             if (shirtModel.SleeveColors is null)
             {
-                var skinTone = GetSkinTone(___farmerTextureManager, ___baseTexture, pixels, ___skin, ____sickFrame, who);
+                var skinTone = GetSkinTone(___farmerTextureManager, ___baseTexture, pixels, ___skin, ____sickFrame);
 
                 SwapColorReversePatch(__instance, texture_name, pixels, 256, skinTone.Darkest);
                 SwapColorReversePatch(__instance, texture_name, pixels, 257, skinTone.Medium);
@@ -236,7 +159,7 @@ namespace FashionSense.Framework.Patches.Renderer
             }
 
             // Get the currently equipped models
-            List<AppearanceMetadata> equippedModels = AppearanceHelpers.GetCurrentlyEquippedModels(who, facingDirection);
+            List<AppearanceMetadata> equippedModels = GetCurrentlyEquippedModels(who, facingDirection);
 
             if (equippedModels.Count > 0)
             {
@@ -247,18 +170,7 @@ namespace FashionSense.Framework.Patches.Renderer
                     b.End();
                     b.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
-                    var oldFacingDirection = who.FacingDirection;
-
-                    // Force facing direction to be downwards when drawing in UI (only when animationFrame.frame is 0)
-                    if (FarmerRenderer.isDrawingForUI && animationFrame.frame == 0)
-                    {
-                        who.faceDirection(2);
-                    }
-
                     HandleConditionalDraw(equippedModels, __instance, ___farmerTextureManager, ___baseTexture, ___skin, ref ___hairstyleSourceRect, ref ___shirtSourceRect, ref ___accessorySourceRect, ref ___hatSourceRect, ref ___positionOffset, ref ___rotationAdjustment, ref ____sickFrame, ref ____shirtDirty, ref ____spriteDirty, b, animationFrame, currentFrame, sourceRect, position, origin, layerDepth, facingDirection, overrideColor, rotation, scale, who);
-
-                    // Restore facing direction
-                    who.faceDirection(oldFacingDirection);
 
                     b.End();
                     b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
@@ -319,7 +231,7 @@ namespace FashionSense.Framework.Patches.Renderer
             }
 
             // Get skin tone
-            var skinTone = DrawPatch.GetSkinTone(___farmerTextureManager, baseTexture, null, ___skin, ____sickFrame, who);
+            var skinTone = DrawPatch.GetSkinTone(___farmerTextureManager, baseTexture, null, ___skin, ____sickFrame);
 
             // Establish the animation data for models
             Dictionary<AppearanceModel, AnimationModel> appearanceTypeToAnimationModels = new Dictionary<AppearanceModel, AnimationModel>();
@@ -335,8 +247,7 @@ namespace FashionSense.Framework.Patches.Renderer
             AppearanceHelpers.OffsetSourceRectangles(who, facingDirection, rotation, ref ___shirtSourceRect, ref dyedShirtSourceRect, ref ___accessorySourceRect, ref ___hatSourceRect, ref ___rotationAdjustment);
 
             // Prepare the DrawManager
-            BodyModel customBody = layers.FirstOrDefault(l => l.AppearanceModel is BodyModel)?.AppearanceModel as BodyModel;
-            DrawManager drawManager = new DrawManager(b, who, __instance, skinTone, customBody, baseTexture, sourceRect, ___shirtSourceRect, dyedShirtSourceRect, ___accessorySourceRect, ___hatSourceRect, appearanceTypeToAnimationModels, animationFrame, overrideColor, position, origin, ___positionOffset, ___rotationAdjustment, facingDirection, currentFrame, scale, rotation, FarmerRendererPatch.AreColorMasksPendingRefresh, FarmerRenderer.isDrawingForUI, AppearanceHelpers.AreSleevesForcedHidden(equippedModels), AppearanceHelpers.IsPlayerBaseForcedHidden(equippedModels), AppearanceHelpers.GetHeightOffset(__instance, equippedModels))
+            DrawManager drawManager = new DrawManager(b, who, __instance, skinTone, baseTexture, sourceRect, ___shirtSourceRect, dyedShirtSourceRect, ___accessorySourceRect, ___hatSourceRect, appearanceTypeToAnimationModels, animationFrame, overrideColor, position, origin, ___positionOffset, ___rotationAdjustment, facingDirection, currentFrame, scale, rotation, FarmerRendererPatch.AreColorMasksPendingRefresh, FarmerRenderer.isDrawingForUI, AppearanceHelpers.AreSleevesForcedHidden(equippedModels))
             {
                 LayerDepth = layerDepth
             };
@@ -361,12 +272,6 @@ namespace FashionSense.Framework.Patches.Renderer
             if (FarmerRenderer.isDrawingForUI is false && who.ActiveObject is not null && who.IsCarrying())
             {
                 Game1.drawPlayerHeldObject(who);
-            }
-
-            // Slightly offset the drawLayerDisambiguator when the player is facing downwards
-            if (facingDirection == 2 && who.UsingTool)
-            {
-                who.drawLayerDisambiguator += 0.01f;
             }
 
             FarmerRendererPatch.AreColorMasksPendingRefresh = false;
@@ -403,15 +308,14 @@ namespace FashionSense.Framework.Patches.Renderer
             DrawPatch.ExecuteRecolorActionsReversePatch(__instance, who);
 
             // Set the source rectangles for vanilla shirts, accessories and hats
-            who.GetDisplayShirt(out var shirtTexture, out var shirtIndex);
-            ___shirtSourceRect = new Rectangle(shirtIndex * 8 % 128, shirtIndex * 8 / 128 * 32, 8, 8);
+            ___shirtSourceRect = new Rectangle(__instance.ClampShirt(who.GetShirtIndex()) * 8 % 128, __instance.ClampShirt(who.GetShirtIndex()) * 8 / 128 * 32, 8, 8);
             if ((int)who.accessory.Value >= 0)
             {
                 ___accessorySourceRect = new Rectangle((int)who.accessory.Value * 16 % FarmerRenderer.accessoriesTexture.Width, (int)who.accessory.Value * 16 / FarmerRenderer.accessoriesTexture.Width * 32, 16, 16);
             }
             if (who.hat.Value != null)
             {
-                ___hatSourceRect = new Rectangle(20 * ItemRegistry.GetDataOrErrorItem(who.hat.Value.QualifiedItemId).SpriteIndex % FarmerRenderer.hatsTexture.Width, 20 * ItemRegistry.GetDataOrErrorItem(who.hat.Value.QualifiedItemId).SpriteIndex / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
+                ___hatSourceRect = new Rectangle(20 * (int)who.hat.Value.which.Value % FarmerRenderer.hatsTexture.Width, 20 * (int)who.hat.Value.which.Value / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
             }
 
             // Go through the models and determine draw order
@@ -443,9 +347,6 @@ namespace FashionSense.Framework.Patches.Renderer
                 case ShoesModel:
                     key = ModDataKeys.UI_HAND_MIRROR_SHOES_COLOR;
                     break;
-                case BodyModel:
-                    key = ModDataKeys.UI_HAND_MIRROR_BODY_COLOR;
-                    break;
             }
 
             if (who.modData.ContainsKey(key) && String.IsNullOrEmpty(who.modData[key]) is false && uint.TryParse(who.modData[key], out var colorPackedValue))
@@ -456,7 +357,96 @@ namespace FashionSense.Framework.Patches.Renderer
             return null;
         }
 
-        internal static SkinToneModel GetSkinTone(LocalizedContentManager farmerTextureManager, Texture2D baseTexture, Color[] pixels, NetInt skin, bool sickFrame, Farmer who)
+        internal static List<AppearanceMetadata> GetCurrentlyEquippedModels(Farmer who, int facingDirection)
+        {
+            // Set up each AppearanceModel
+            List<AppearanceMetadata> models = new List<AppearanceMetadata>();
+
+            // Pants pack
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_PANTS_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<PantsContentPack>(who.modData[ModDataKeys.CUSTOM_PANTS_ID]) is PantsContentPack pPack && pPack != null)
+            {
+                var pantModel = pPack.GetPantsFromFacingDirection(facingDirection);
+                models.Add(new AppearanceMetadata(pantModel, AppearanceHelpers.GetAllAppearanceColors(who, pantModel)));
+            }
+
+            // Hair pack
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_HAIR_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<HairContentPack>(who.modData[ModDataKeys.CUSTOM_HAIR_ID]) is HairContentPack hPack && hPack != null)
+            {
+                var hairModel = hPack.GetHairFromFacingDirection(facingDirection);
+                models.Add(new AppearanceMetadata(hairModel, AppearanceHelpers.GetAllAppearanceColors(who, hairModel)));
+            }
+
+            // Accessory packs
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_ACCESSORY_COLLECTIVE_ID))
+            {
+                try
+                {
+                    foreach (int index in FashionSense.accessoryManager.GetActiveAccessoryIndices(who))
+                    {
+                        var accessoryKey = FashionSense.accessoryManager.GetAccessoryIdByIndex(who, index);
+                        if (FashionSense.textureManager.GetSpecificAppearanceModel<AccessoryContentPack>(accessoryKey) is AccessoryContentPack aPack && aPack != null)
+                        {
+                            AccessoryModel accessoryModel = aPack.GetAccessoryFromFacingDirection(facingDirection);
+                            if (accessoryModel is null)
+                            {
+                                continue;
+                            }
+
+                            var colors = new List<Color>();
+                            if (accessoryModel.ColorMaskLayers.Count > 0)
+                            {
+                                for (int x = 0; x < accessoryModel.ColorMaskLayers.Count; x++)
+                                {
+                                    colors.Add(FashionSense.accessoryManager.GetColorFromIndex(who, index, x));
+                                }
+                            }
+                            else
+                            {
+                                colors.Add(FashionSense.accessoryManager.GetColorFromIndex(who, index));
+                            }
+
+                            models.Add(new AppearanceMetadata(accessoryModel, colors));
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // TODO: Flag error here
+                }
+            }
+
+            // Hat pack
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_HAT_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<HatContentPack>(who.modData[ModDataKeys.CUSTOM_HAT_ID]) is HatContentPack tPack && tPack != null)
+            {
+                var hatModel = tPack.GetHatFromFacingDirection(facingDirection);
+                models.Add(new AppearanceMetadata(hatModel, AppearanceHelpers.GetAllAppearanceColors(who, hatModel)));
+            }
+
+            // Shirt pack
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_SHIRT_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<ShirtContentPack>(who.modData[ModDataKeys.CUSTOM_SHIRT_ID]) is ShirtContentPack sPack && sPack != null)
+            {
+                var shirtModel = sPack.GetShirtFromFacingDirection(facingDirection);
+                models.Add(new AppearanceMetadata(shirtModel, AppearanceHelpers.GetAllAppearanceColors(who, shirtModel)));
+            }
+
+            // Sleeves pack
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_SLEEVES_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<SleevesContentPack>(who.modData[ModDataKeys.CUSTOM_SLEEVES_ID]) is SleevesContentPack slPack && slPack != null)
+            {
+                var slModel = slPack.GetSleevesFromFacingDirection(facingDirection);
+                models.Add(new AppearanceMetadata(slModel, AppearanceHelpers.GetAllAppearanceColors(who, slModel)));
+            }
+
+            // Shoes pack
+            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_SHOES_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<ShoesContentPack>(who.modData[ModDataKeys.CUSTOM_SHOES_ID]) is ShoesContentPack shPack && shPack != null)
+            {
+                var shModel = shPack.GetShoesFromFacingDirection(facingDirection);
+                models.Add(new AppearanceMetadata(shModel, AppearanceHelpers.GetAllAppearanceColors(who, shModel)));
+            }
+
+            return models.Where(m => m is not null && m.Model is not null && m.Model.Pack is not null).ToList();
+        }
+
+        internal static SkinToneModel GetSkinTone(LocalizedContentManager farmerTextureManager, Texture2D baseTexture, Color[] pixels, NetInt skin, bool sickFrame)
         {
             Texture2D skinColors = farmerTextureManager.Load<Texture2D>("Characters\\Farmer\\skinColors");
             Color[] skinColorsData = new Color[skinColors.Width * skinColors.Height];
@@ -476,12 +466,6 @@ namespace FashionSense.Framework.Patches.Renderer
             Color medium = skinColorsData[skin_index * 3 % (skinColors.Height * 3) + 1];
             Color lightest = skinColorsData[skin_index * 3 % (skinColors.Height * 3) + 2];
 
-            BodyModel bodyModel = null;
-            if (who.modData.ContainsKey(ModDataKeys.CUSTOM_BODY_ID) && FashionSense.textureManager.GetSpecificAppearanceModel<BodyContentPack>(who.modData[ModDataKeys.CUSTOM_BODY_ID]) is BodyContentPack bodyPack && bodyPack is not null)
-            {
-                bodyModel = bodyPack.GetBodyFromFacingDirection(who.FacingDirection);
-            }
-
             if (sickFrame)
             {
                 if (pixels is null)
@@ -491,25 +475,6 @@ namespace FashionSense.Framework.Patches.Renderer
                 darkest = pixels[260 + baseTexture.Width];
                 medium = pixels[261 + baseTexture.Width];
                 lightest = pixels[262 + baseTexture.Width];
-            }
-            else
-            {
-                Color? bodyColor = GetBodyColor(who);
-                if (bodyColor is not null)
-                {
-                    var darkestColor = new Color(107, 0, 58);
-                    var mediumColor = new Color(224, 107, 101);
-                    var lightestColor = new Color(249, 174, 137);
-
-                    if (bodyModel is not null && bodyModel.SkinTone is not null)
-                    {
-                        darkestColor = bodyModel.SkinTone.Darkest;
-                        mediumColor = bodyModel.SkinTone.Medium;
-                        lightestColor = bodyModel.SkinTone.Lightest;
-                    }
-
-                    return new SkinToneModel(Utility.MultiplyColor(lightestColor, bodyColor.Value), Utility.MultiplyColor(mediumColor, bodyColor.Value), Utility.MultiplyColor(darkestColor, bodyColor.Value));
-                }
             }
 
             return new SkinToneModel(lightest, medium, darkest);

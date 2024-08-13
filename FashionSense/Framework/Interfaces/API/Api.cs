@@ -217,7 +217,7 @@ namespace FashionSense.Framework.Interfaces.API
 
                 if (appearanceDrawOverrideMethod(drawTool) is true)
                 {
-                    _monitor.LogOnce($"Draw logic for appearance type {appearanceType} was overriden by {manifest.UniqueID}", LogLevel.Trace);
+                    _monitor.LogOnce("Draw logic for appearance type " + appearanceType + " was overriden by " + manifest.UniqueID, LogLevel.Trace);
                     return true;
                 }
             }
@@ -316,13 +316,13 @@ namespace FashionSense.Framework.Interfaces.API
             var appearanceId = GetAppearanceId(targetPackId, packType, targetAppearanceName);
             if (IsAppearanceIdValid(appearanceId) is false)
             {
-                return GenerateResponsePair(false, $"No Fashion Sense {packType} found with the id of {appearanceId}");
+                return GenerateResponsePair(false, "No Fashion Sense " + packType+ " found with the id of " + appearanceId);
             }
 
             // See if we need to reset the texture, if it is dirty
             if (FashionSense.ResetTextureIfNecessary(appearanceId) is false)
             {
-                return GenerateResponsePair(false, $"No Fashion Sense {packType} found with the id of {appearanceId}");
+                return GenerateResponsePair(false, "No Fashion Sense " + packType+ " found with the id of " + appearanceId);
             }
 
             // Attempt to set the sprite
@@ -345,13 +345,13 @@ namespace FashionSense.Framework.Interfaces.API
             }
             else if (SetFarmerAppearance(appearanceId, packType) is false)
             {
-                return GenerateResponsePair(false, $"Failed to set the {packType} appearance with the id of {appearanceId}");
+                return GenerateResponsePair(false, "Failed to set the " + packType + " appearance with the id of " + appearanceId);
             }
 
             // Alert the player of the forceful change
-            _monitor.Log($"The mod {callerManifest.Name} changed your Fashion Sense {packType} appearance.", LogLevel.Info);
+            _monitor.Log("The mod "+callerManifest.Name+" changed your Fashion Sense "+packType+" appearance.", LogLevel.Info);
 
-            return GenerateResponsePair(true, $"Successfully set the {packType} appearance with the id of {appearanceId}");
+            return GenerateResponsePair(true, "Successfully set the "+packType+" appearance with the id of "+appearanceId);
         }
 
         private KeyValuePair<bool, string> ClearFashionSenseAppearance(IApi.Type packType, IManifest callerManifest)
@@ -368,13 +368,13 @@ namespace FashionSense.Framework.Interfaces.API
             }
             else if (SetFarmerAppearance("None", packType) is false)
             {
-                return GenerateResponsePair(false, $"Failed to clear the {packType} appearance");
+                return GenerateResponsePair(false, "Failed to clear the "+packType+" appearance");
             }
 
             // Alert the player of the forceful change
-            _monitor.Log($"The mod {callerManifest.Name} cleared your Fashion Sense {packType} appearance.", LogLevel.Info);
+            _monitor.Log("The mod "+callerManifest.Name+" cleared your Fashion Sense "+packType+" appearance.", LogLevel.Info);
 
-            return GenerateResponsePair(true, $"Successfully cleared the {packType} appearance");
+            return GenerateResponsePair(true, "Successfully cleared the "+packType+" appearance");
         }
 
 
@@ -387,18 +387,18 @@ namespace FashionSense.Framework.Interfaces.API
         {
             if (accessorySlot < 0)
             {
-                return GenerateResponsePair(false, $"Invalid accessorySlot given: {accessorySlot}! Must be at least 0.");
+                return GenerateResponsePair(false, "Invalid accessorySlot given: "+accessorySlot+"! Must be at least 0.");
             }
 
             if (IsAppearanceIdValid(accessoryId) is false)
             {
-                return GenerateResponsePair(false, $"No Fashion Sense Accessory found with the id of {accessoryId}");
+                return GenerateResponsePair(false, "No Fashion Sense Accessory found with the id of "+accessoryId);
             }
 
             _accessoryManager.AddAccessory(Game1.player, accessoryId, accessorySlot, preserveColor: true);
             FashionSense.SetSpriteDirty();
 
-            return GenerateResponsePair(true, $"Set farmer's accessory slot ({accessorySlot}) to accessory {accessoryId}.");
+            return GenerateResponsePair(true, "Set farmer's accessory slot ("+accessorySlot+") to accessory "+accessoryId+".");
         }
 
         public KeyValuePair<bool, string> SetAppearanceColor(IApi.Type appearanceType, Color color, IManifest callerManifest)
@@ -434,18 +434,18 @@ namespace FashionSense.Framework.Interfaces.API
                     break;
             }
 
-            return GenerateResponsePair(true, $"Successfully set the color for {appearanceType} appearance to color {color.PackedValue}");
+            return GenerateResponsePair(true, "Successfully set the color for "+appearanceType+" appearance to color "+color.PackedValue);
         }
 
         public KeyValuePair<bool, string> SetAccessoryColor(Color color, int accessorySlot)
         {
             if (accessorySlot < 0)
             {
-                return GenerateResponsePair(false, $"Invalid accessorySlot given: {accessorySlot}! Must be at least 0.");
+                return GenerateResponsePair(false, $"Invalid accessorySlot given: "+accessorySlot+"! Must be at least 0.");
             }
             _accessoryManager.SetColorForIndex(Game1.player, accessorySlot, color);
 
-            return GenerateResponsePair(true, $"Set color of farmer's accessory slot ({accessorySlot}) to {color.PackedValue}.");
+            return GenerateResponsePair(true, $"Set color of farmer's accessory slot ("+accessorySlot+") to "+color.PackedValue+".");
         }
 
         #region Obsolete set methods
@@ -505,13 +505,13 @@ namespace FashionSense.Framework.Interfaces.API
         {
             if (accessorySlot < 0)
             {
-                return GenerateResponsePair(false, $"Invalid accessorySlot given: {accessorySlot}! Must be at least 0.");
+                return GenerateResponsePair(false, "Invalid accessorySlot given: "+accessorySlot+"! Must be at least 0.");
             }
 
             _accessoryManager.RemoveAccessory(Game1.player, accessorySlot);
             FashionSense.SetSpriteDirty();
 
-            return GenerateResponsePair(true, $"Cleared farmer's accessory slot ({accessorySlot}).");
+            return GenerateResponsePair(true, "Cleared farmer's accessory slot ("+accessorySlot+").");
         }
 
         #region Obsolete clear methods
@@ -572,18 +572,18 @@ namespace FashionSense.Framework.Interfaces.API
 
             if (String.IsNullOrEmpty(modDataKey))
             {
-                return GenerateResponsePair(false, $"No match for the IApi.Type value of: {appearanceType}");
+                return GenerateResponsePair(false, "No match for the IApi.Type value of: "+appearanceType+"");
             }
 
             if (target.modData.ContainsKey(modDataKey) is false)
             {
-                return GenerateResponsePair(false, $"The player has not worn a Fashion Sense appearance of the type {appearanceType} | {modDataKey}");
+                return GenerateResponsePair(false, "The player has not worn a Fashion Sense appearance of the type "+appearanceType+" | "+modDataKey+"");
             }
 
             var appearancePack = _textureManager.GetSpecificAppearanceModel<AppearanceContentPack>(target.modData[modDataKey]);
             if (appearancePack is null)
             {
-                return GenerateResponsePair(false, $"Invalid or deleted appearance pack is currently saved for the type {appearanceType} | {target.modData[modDataKey]}");
+                return GenerateResponsePair(false, "Invalid or deleted appearance pack is currently saved for the type "+appearanceType+" | "+target.modData[modDataKey]+"");
             }
 
             return GenerateResponsePair(true, appearancePack.Id);
@@ -652,7 +652,7 @@ namespace FashionSense.Framework.Interfaces.API
             var appearancePack = _textureManager.GetSpecificAppearanceModel<AppearanceContentPack>(appearanceId);
             if (appearancePack is null)
             {
-                return GenerateResponsePair(false, $"Invalid or deleted appearance pack is currently saved for {appearanceId}!");
+                return GenerateResponsePair(false, "Invalid or deleted appearance pack is currently saved for "+appearanceId+"!");
             }
 
             Color[] currentTextureData = new Color[appearancePack.Texture.Width * appearancePack.Texture.Height];
@@ -660,7 +660,7 @@ namespace FashionSense.Framework.Interfaces.API
 
             if (textureData.Data.Length != currentTextureData.Length)
             {
-                return GenerateResponsePair(false, $"The given textureData.Data.Length ({textureData.Data.Length}) doesn't match the current appearance's texture length ({currentTextureData.Length}): {appearanceId}!");
+                return GenerateResponsePair(false, "The given textureData.Data.Length ("+textureData.Data.Length+") doesn't match the current appearance's texture length ("+currentTextureData.Length+"): "+appearanceId+"!");
             }
 
             try
@@ -670,12 +670,12 @@ namespace FashionSense.Framework.Interfaces.API
             }
             catch (Exception ex)
             {
-                _monitor.Log($"Setting texture via SetAppearanceTexture failed with the following error: {ex}", LogLevel.Trace);
-                return GenerateResponsePair(true, $"Failed to set texture data, see the log for details.");
+                _monitor.Log("Setting texture via SetAppearanceTexture failed with the following error: "+ex+"", LogLevel.Trace);
+                return GenerateResponsePair(true, "Failed to set texture data, see the log for details.");
             }
-            _monitor.LogOnce($"{callerManifest.Name} [{callerManifest.UniqueID}] overrode the texture for {appearanceId}!", LogLevel.Trace);
+            _monitor.LogOnce(callerManifest.Name+" ["+callerManifest.UniqueID+"] overrode the texture for "+appearanceId+"!", LogLevel.Trace);
 
-            return GenerateResponsePair(true, $"Successfully set the texture data for {appearanceId}!");
+            return GenerateResponsePair(true, "Successfully set the texture data for "+appearanceId+"!");
         }
 
         public KeyValuePair<bool, string> ResetAppearanceTexture(IApi.Type appearanceType, string targetPackId, string targetAppearanceName, IManifest callerManifest)
@@ -693,16 +693,16 @@ namespace FashionSense.Framework.Interfaces.API
             var appearancePack = _textureManager.GetSpecificAppearanceModel<AppearanceContentPack>(appearanceId);
             if (appearancePack is null)
             {
-                return GenerateResponsePair(false, $"Invalid or deleted appearance pack is currently saved for {appearanceId}!");
+                return GenerateResponsePair(false, "Invalid or deleted appearance pack is currently saved for "+appearanceId+"!");
             }
 
             if (appearancePack.ResetTexture() is false)
             {
-                return GenerateResponsePair(true, $"Failed to reset texture data, see the log for details.");
+                return GenerateResponsePair(true, "Failed to reset texture data, see the log for details.");
             }
-            _monitor.LogOnce($"{callerManifest.Name} [{callerManifest.UniqueID}] reset the texture for {appearanceId}!", LogLevel.Trace);
+            _monitor.LogOnce(callerManifest.Name+" ["+callerManifest.UniqueID+"] reset the texture for "+appearanceId+"!", LogLevel.Trace);
 
-            return GenerateResponsePair(true, $"Successfully reset the texture data for {appearanceId}!");
+            return GenerateResponsePair(true, "Successfully reset the texture data for "+appearanceId+"!");
         }
 
         public KeyValuePair<bool, List<string>> GetOutfitIds()
@@ -716,7 +716,7 @@ namespace FashionSense.Framework.Interfaces.API
         {
             if (Game1.player.modData.ContainsKey(ModDataKeys.CURRENT_OUTFIT_ID) is false)
             {
-                return GenerateResponsePair(false, $"Player has not selected an outfit!");
+                return GenerateResponsePair(false, "Player has not selected an outfit!");
             }
 
             return GenerateResponsePair(true, Game1.player.modData[ModDataKeys.CURRENT_OUTFIT_ID]);
@@ -726,14 +726,14 @@ namespace FashionSense.Framework.Interfaces.API
         {
             if (FashionSense.outfitManager.DoesOutfitExist(Game1.player, outfitId) is false)
             {
-                return GenerateResponsePair(false, $"No outfit matched for {outfitId}!");
+                return GenerateResponsePair(false, "No outfit matched for "+outfitId+"!");
             }
-            _monitor.Log($"The mod {callerManifest.Name} set your Fashion Sense outfit to {outfitId}.", LogLevel.Info);
+            _monitor.Log("The mod "+callerManifest.Name+" set your Fashion Sense outfit to "+outfitId+".", LogLevel.Info);
 
             Outfit outfit = FashionSense.outfitManager.GetOutfit(Game1.player, outfitId);
             FashionSense.outfitManager.SetOutfit(Game1.player, outfit);
 
-            return GenerateResponsePair(true, $"Player's outfit has been set to {outfitId}.");
+            return GenerateResponsePair(true, "Player's outfit has been set to "+outfitId+".");
         }
 
         public KeyValuePair<bool, string> SetAppearanceLockState(IApi.Type appearanceType, string targetPackId, string targetAppearanceName, bool isLocked, IManifest callerManifest)
@@ -743,12 +743,12 @@ namespace FashionSense.Framework.Interfaces.API
             var appearancePack = _textureManager.GetSpecificAppearanceModel<AppearanceContentPack>(appearanceId);
             if (appearancePack is null)
             {
-                return GenerateResponsePair(false, $"Invalid or deleted appearance pack is currently saved for {appearanceId}!");
+                return GenerateResponsePair(false, "Invalid or deleted appearance pack is currently saved for "+appearanceId+"!");
             }
             appearancePack.IsLocked = isLocked;
 
-            _monitor.Log($"The mod {callerManifest.Name} set IsLocked to {isLocked} for the appearance {appearanceId}.", LogLevel.Trace);
-            return GenerateResponsePair(true, $"Set IsLocked to {isLocked} for the appearance {appearanceId}.");
+            _monitor.Log("The mod "+callerManifest.Name+" set IsLocked to "+isLocked+" for the appearance "+appearanceId+".", LogLevel.Trace);
+            return GenerateResponsePair(true, "Set IsLocked to "+isLocked+" for the appearance "+appearanceId+".");
         }
 
         public KeyValuePair<bool, string> RegisterAppearanceDrawOverride(IApi.Type appearanceType, IManifest callerManifest, Func<IDrawTool, bool> appearanceDrawOverride)
@@ -760,26 +760,26 @@ namespace FashionSense.Framework.Interfaces.API
 
             appearanceTypeToDrawOverrides[appearanceType][callerManifest] = appearanceDrawOverride;
 
-            _monitor.Log($"The mod {callerManifest.Name} registered a draw override for the appearance type {appearanceType}.", LogLevel.Info);
-            return GenerateResponsePair(true, $"Registered the draw override for the appearance type {appearanceType}.");
+            _monitor.Log("The mod "+callerManifest.Name+" registered a draw override for the appearance type "+appearanceType+".", LogLevel.Info);
+            return GenerateResponsePair(true, "Registered the draw override for the appearance type "+appearanceType+".");
         }
 
         public KeyValuePair<bool, string> UnregisterAppearanceDrawOverride(IApi.Type appearanceType, IManifest callerManifest)
         {
             if (appearanceTypeToDrawOverrides.ContainsKey(appearanceType) is false || appearanceTypeToDrawOverrides[appearanceType].ContainsKey(callerManifest) is false)
             {
-                return GenerateResponsePair(false, $"There were no registered draw overrides under {callerManifest.Name} for the appearance type {appearanceType}.");
+                return GenerateResponsePair(false, "There were no registered draw overrides under "+callerManifest.Name+" for the appearance type "+appearanceType+".");
             }
             appearanceTypeToDrawOverrides[appearanceType].Remove(callerManifest);
 
-            return GenerateResponsePair(true, $"Unregistered the draw override for the appearance type {appearanceType}.");
+            return GenerateResponsePair(true, "Unregistered the draw override for the appearance type "+appearanceType+".");
         }
 
         public KeyValuePair<bool, string> IsDrawOverrideActive(IApi.Type appearanceType, IManifest callerManifest)
         {
             if (appearanceTypeToDrawOverrides.ContainsKey(appearanceType) is false || appearanceTypeToDrawOverrides[appearanceType].ContainsKey(callerManifest) is false)
             {
-                return GenerateResponsePair(false, $"There were no registered draw overrides under {callerManifest.Name} for the appearance type {appearanceType}.");
+                return GenerateResponsePair(false, "There were no registered draw overrides under "+callerManifest.Name+" for the appearance type "+appearanceType+".");
             }
 
             return GetCurrentAppearanceId(appearanceType);

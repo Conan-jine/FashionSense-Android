@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FashionSense.Framework.Models.Appearances
 {
@@ -16,7 +15,6 @@ namespace FashionSense.Framework.Models.Appearances
         internal string Author { get; set; }
         public string Name { get; set; }
         public Version Format { get; set; } = new Version("1.0.0");
-        public List<string> Tags { get; set; } = new List<string>();
         internal string Id { get; set; }
         internal string PackName { get; set; }
         internal string PackId { get; set; }
@@ -47,7 +45,7 @@ namespace FashionSense.Framework.Models.Appearances
             }
             catch (Exception ex)
             {
-                FashionSense.monitor.Log($"Failed to restore cached texture: {ex}", StardewModdingAPI.LogLevel.Trace);
+                FashionSense.monitor.Log("Failed to restore cached texture: "+ex, StardewModdingAPI.LogLevel.Trace);
                 return false;
             }
 
@@ -57,11 +55,6 @@ namespace FashionSense.Framework.Models.Appearances
         internal Texture2D GetCachedTexture()
         {
             return _cachedTexture;
-        }
-
-        internal bool HasTag(string keyword)
-        {
-            return Tags.Any(k => k.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
         }
     }
 }

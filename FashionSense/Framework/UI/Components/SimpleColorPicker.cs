@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -29,22 +28,6 @@ namespace FashionSense.Framework.UI.Components
             bounds = new Rectangle(x, y, SliderBar.defaultWidth, 60);
         }
 
-        public void KeyPress(Keys key)
-        {
-            if (hueSlider.input.Selected is true)
-            {
-                hueSlider.ReceiveKeyPress(key);
-            }
-            if (saturationSlider.input.Selected is true)
-            {
-                saturationSlider.ReceiveKeyPress(key);
-            }
-            if (lightnessSlider.input.Selected is true)
-            {
-                lightnessSlider.ReceiveKeyPress(key);
-            }
-        }
-
         public void Scroll(int delta)
         {
             if (recentSliderBar != null)
@@ -70,10 +53,6 @@ namespace FashionSense.Framework.UI.Components
 
         public bool Click(int x, int y)
         {
-            hueSlider.input.Update();
-            saturationSlider.input.Update();
-            lightnessSlider.input.Update();
-
             recentSliderBar = null;
             if (bounds.Contains(x, y))
             {
@@ -93,27 +72,6 @@ namespace FashionSense.Framework.UI.Components
                     return true;
                 }
             }
-            else
-            {
-                hueSlider.input.Selected = false;
-                if (hueSlider.inputCC.containsPoint(x, y) is true)
-                {
-                    hueSlider.input.Selected = true;
-                    recentSliderBar = hueSlider;
-                }
-                saturationSlider.input.Selected = false;
-                if (saturationSlider.inputCC.containsPoint(x, y) is true)
-                {
-                    saturationSlider.input.Selected = true;
-                    recentSliderBar = saturationSlider;
-                }
-                lightnessSlider.input.Selected = false;
-                if (lightnessSlider.inputCC.containsPoint(x, y) is true)
-                {
-                    lightnessSlider.input.Selected = true;
-                    recentSliderBar = lightnessSlider;
-                }
-            }
 
             return false;
         }
@@ -122,15 +80,15 @@ namespace FashionSense.Framework.UI.Components
         {
             if (recentSliderBar != null)
             {
-                if (recentSliderBar.Equals(hueSlider) && hueSlider.input.Selected is false)
+                if (recentSliderBar.Equals(hueSlider))
                 {
                     return hueSlider.ReceiveLeftClick(x, y, true);
                 }
-                if (recentSliderBar.Equals(saturationSlider) && saturationSlider.input.Selected is false)
+                if (recentSliderBar.Equals(saturationSlider))
                 {
                     return saturationSlider.ReceiveLeftClick(x, y, true);
                 }
-                if (recentSliderBar.Equals(lightnessSlider) && lightnessSlider.input.Selected is false)
+                if (recentSliderBar.Equals(lightnessSlider))
                 {
                     return lightnessSlider.ReceiveLeftClick(x, y, true);
                 }

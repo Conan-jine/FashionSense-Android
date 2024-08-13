@@ -138,16 +138,16 @@ namespace FashionSense.Framework.Managers
 
         internal string GetKeyForAccessoryId(int index)
         {
-            return $"FashionSense.CustomAccessory.{index}.Id";
+            return "FashionSense.CustomAccessory."+index+".Id";
         }
 
         internal string GetKeyForAccessoryColor(int index, int maskLayerIndex = 0)
         {
             if (maskLayerIndex > 0)
             {
-                return $"FashionSense.CustomAccessory.{index}.Color.{maskLayerIndex}.Mask";
+                return "FashionSense.CustomAccessory."+index+".Color."+maskLayerIndex+".Mask";
             }
-            return $"FashionSense.CustomAccessory.{index}.Color";
+            return "FashionSense.CustomAccessory."+index+".Color";
         }
 
         internal int GetAccessoryIndexById(Farmer who, string accessoryId)

@@ -1,10 +1,6 @@
 {
   "Name": "Animated Pumpkin Head",
   "IsLocked": false,
-  "Tags": [
-    "Test Tag One",
-    "Another Tag"
-  ],
   "FrontHat": {
     "HideHair": true,
     "DisableGrayscale": true,

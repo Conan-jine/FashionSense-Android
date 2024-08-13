@@ -62,8 +62,7 @@ namespace FashionSense.Framework.Models.Appearances.Generic
             IsSick,
             IsPassingOut,
             CurrentFarmerFrame,
-            RandomChance,
-            GameStateQuery
+            RandomChance
         }
 
         public Type Name { get; set; }

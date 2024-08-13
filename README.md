@@ -1,6 +1,6 @@
 
 # Andriod-version
-see the branch of v5.8.1-android
+this is the Andriod-version of v5.8.1
 
 # Fashion Sense 💇‍♀️🎩
 A modding framework for Stardew Valley that allows for bigger accessories, hairstyles, hats, shirts, sleeves, pants and shoes. Also includes animation support, custom outfits and more!

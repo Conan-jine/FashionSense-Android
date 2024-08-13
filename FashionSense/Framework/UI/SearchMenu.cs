@@ -237,7 +237,7 @@ namespace FashionSense.Framework.UI
                 {
                     var targetPack = filteredTextureOptions[textureIndex];
 
-                    _hoverText = $"{targetPack.Name}\nBy: {targetPack.Author}";
+                    _hoverText = ""+targetPack.Name+"\nBy: "+targetPack.Author+"";
                 }
             }
 

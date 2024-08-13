@@ -105,7 +105,6 @@ namespace FashionSense
                 new GameLocationPatch(monitor, modHelper).Apply(harmony);
 
                 // Apply UI related patches
-                new CharacterCustomizationPatch(monitor, modHelper).Apply(harmony);
                 new LetterViewerMenuPatch(monitor, modHelper).Apply(harmony);
                 new SaveFileSlotPatch(monitor, modHelper).Apply(harmony);
 
@@ -120,7 +119,7 @@ namespace FashionSense
             }
             catch (Exception e)
             {
-                Monitor.Log($"Issue with Harmony patching: {e}", LogLevel.Error);
+                Monitor.Log("Issue with Harmony patching: {e}", LogLevel.Error);
                 return;
             }
 
@@ -301,7 +300,7 @@ namespace FashionSense
             // Check if we need to give a Hand Mirror at the start of the game
             if (SDate.Now().DaysSinceStart == 1 && Game1.player.modData.ContainsKey(ModDataKeys.STARTS_WITH_HAND_MIRROR))
             {
-                Monitor.Log($"Giving the Hand Mirror to player {Game1.player.Name} via letter as they enabled STARTS_WITH_HAND_MIRROR");
+                Monitor.Log("Giving the Hand Mirror to player " + Game1.player.Name + " via letter as they enabled STARTS_WITH_HAND_MIRROR");
                 Game1.player.mailbox.Add(ModDataKeys.LETTER_HAND_MIRROR);
             }
         }
@@ -346,30 +345,30 @@ namespace FashionSense
             // Load owned content packs
             foreach (IContentPack contentPack in Helper.ContentPacks.GetOwned().Where(c => String.IsNullOrEmpty(packId) is true || c.Manifest.UniqueID.Equals(packId, StringComparison.OrdinalIgnoreCase)))
             {
-                Monitor.Log($"Loading data from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", silent ? LogLevel.Trace : LogLevel.Debug);
+                Monitor.Log("Loading data from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, silent ? LogLevel.Trace : LogLevel.Debug);
 
                 // Load Hairs
-                Monitor.Log($"Loading hairstyles from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading hairstyles from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddHairContentPacks(contentPack);
 
                 // Load Accessories
-                Monitor.Log($"Loading accessories from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading accessories from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddAccessoriesContentPacks(contentPack);
 
                 // Load Hats
-                Monitor.Log($"Loading hats from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading hats from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddHatsContentPacks(contentPack);
 
                 // Load Shirts
-                Monitor.Log($"Loading shirts from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading shirts from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddShirtsContentPacks(contentPack);
 
                 // Load Pants
-                Monitor.Log($"Loading pants from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading pants from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddPantsContentPacks(contentPack);
 
                 // Load Sleeves
-                Monitor.Log($"Loading sleeves from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading sleeves from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddSleevesContentPacks(contentPack);
 
                 // Add internal shoe pack for recoloring of vanilla shoes
@@ -388,7 +387,7 @@ namespace FashionSense
                 });
 
                 // Load Shoes
-                Monitor.Log($"Loading shoes from pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author}", LogLevel.Trace);
+                Monitor.Log("Loading shoes from pack: " + contentPack.Manifest.Name+ " " +contentPack.Manifest.Version+ " by " +contentPack.Manifest.Author, LogLevel.Trace);
                 AddShoesContentPacks(contentPack);
 
                 // Load in Condition Groups
@@ -397,7 +396,7 @@ namespace FashionSense
                     var conditions = contentPack.ReadJsonFile<Dictionary<string, List<Condition>>>("conditions.json");
                     foreach (var condition in conditions)
                     {
-                        conditionGroups[$"{contentPack.Manifest.UniqueID}.{condition.Key}".ToLower()] = new ConditionGroup() { Conditions = condition.Value };
+                        conditionGroups["{contentPack.Manifest.UniqueID}.{condition.Key}".ToLower()] = new ConditionGroup() { Conditions = condition.Value };
                     }
                 }
             }
@@ -415,14 +414,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hairs"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Hairs folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Hairs folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var hairFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (hairFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Hairs for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Hairs for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -433,7 +432,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a hair.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + " is missing a hair.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -450,7 +449,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add hairstyle from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -465,43 +464,43 @@ namespace FashionSense
                     // Verify that a hairstyle with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<HairContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add hairstyle from {contentPack.Manifest.Name}: This pack already contains a hairstyle with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle from " + contentPack.Manifest.Name + ": This pack already contains a hairstyle with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one HairModel is given
                     if (appearanceModel.BackHair is null && appearanceModel.RightHair is null && appearanceModel.FrontHair is null && appearanceModel.LeftHair is null)
                     {
-                        Monitor.Log($"Unable to add hairstyle for {appearanceModel.Name} from {contentPack.Manifest.Name}: No hair models given (FrontHair, BackHair, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle for h from " + contentPack.Manifest.Name + ": No hair models given (FrontHair, BackHair, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontHair is not null && appearanceModel.FrontHair.HairSize is null)
                     {
-                        Monitor.Log($"Unable to add hairstyle for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontHair is missing the required property HairSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontHair is missing the required property HairSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackHair is not null && appearanceModel.BackHair.HairSize is null)
                     {
-                        Monitor.Log($"Unable to add hairstyle for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackHair is missing the required property HairSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackHair is missing the required property HairSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftHair is not null && appearanceModel.LeftHair.HairSize is null)
                     {
-                        Monitor.Log($"Unable to add hairstyle for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftHair is missing the required property HairSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftHair is missing the required property HairSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightHair is not null && appearanceModel.RightHair.HairSize is null)
                     {
-                        Monitor.Log($"Unable to add hairstyle for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightHair is missing the required property HairSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightHair is missing the required property HairSize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "hair.png")))
                     {
-                        Monitor.Log($"Unable to add hairstyle for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated hair.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add hairstyle for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated hair.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -520,7 +519,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading hairstyles from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading hairstyles from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -531,14 +530,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Accessories"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Accessories folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Accessories folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var accessoryFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (accessoryFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Accessories for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Accessories for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -549,7 +548,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a accessory.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + " is missing a accessory.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -566,7 +565,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add accessories from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessories from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -581,43 +580,43 @@ namespace FashionSense
                     // Verify that a accessory with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<AccessoryContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add accessory from {contentPack.Manifest.Name}: This pack already contains a accessory with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory from " + contentPack.Manifest.Name + ": This pack already contains a accessory with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one AccessoryModel is given
                     if (appearanceModel.BackAccessory is null && appearanceModel.RightAccessory is null && appearanceModel.FrontAccessory is null && appearanceModel.LeftAccessory is null)
                     {
-                        Monitor.Log($"Unable to add accessory for {appearanceModel.Name} from {contentPack.Manifest.Name}: No accessory models given (FrontAccessory, BackAccessory, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No accessory models given (FrontAccessory, BackAccessory, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontAccessory is not null && appearanceModel.FrontAccessory.AccessorySize is null)
                     {
-                        Monitor.Log($"Unable to add accessory for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontAccessory is missing the required property AccessorySize", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontAccessory is missing the required property AccessorySize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackAccessory is not null && appearanceModel.BackAccessory.AccessorySize is null)
                     {
-                        Monitor.Log($"Unable to add accessory for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackAccessory is missing the required property AccessorySize", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackAccessory is missing the required property AccessorySize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftAccessory is not null && appearanceModel.LeftAccessory.AccessorySize is null)
                     {
-                        Monitor.Log($"Unable to add accessory for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftAccessory is missing the required property AccessorySize", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftAccessory is missing the required property AccessorySize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightAccessory is not null && appearanceModel.RightAccessory.AccessorySize is null)
                     {
-                        Monitor.Log($"Unable to add accessory for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightAccessory is missing the required property AccessorySize", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightAccessory is missing the required property AccessorySize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "accessory.png")))
                     {
-                        Monitor.Log($"Unable to add accessory for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated accessory.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add accessory for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated accessory.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -636,7 +635,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading accessories from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading accessories from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -647,14 +646,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hats"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Hats folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Hats folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var hatFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (hatFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Hats for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Hats for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -665,7 +664,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a hat.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + "is missing a hat.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -682,7 +681,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add hats from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add hats from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -697,43 +696,43 @@ namespace FashionSense
                     // Verify that a hat with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<HatContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add hat from {contentPack.Manifest.Name}: This pack already contains a hat with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat from " + contentPack.Manifest.Name + ": This pack already contains a hat with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one HatModel is given
                     if (appearanceModel.BackHat is null && appearanceModel.RightHat is null && appearanceModel.FrontHat is null && appearanceModel.LeftHat is null)
                     {
-                        Monitor.Log($"Unable to add hat for {appearanceModel.Name} from {contentPack.Manifest.Name}: No hat models given (FrontHat, BackHat, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No hat models given (FrontHat, BackHat, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontHat is not null && appearanceModel.FrontHat.HatSize is null)
                     {
-                        Monitor.Log($"Unable to add hat for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontHat is missing the required property HatSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontHat is missing the required property HatSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackHat is not null && appearanceModel.BackHat.HatSize is null)
                     {
-                        Monitor.Log($"Unable to add hat for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackHat is missing the required property HatSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackHat is missing the required property HatSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftHat is not null && appearanceModel.LeftHat.HatSize is null)
                     {
-                        Monitor.Log($"Unable to add hat for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftHat is missing the required property HatSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftHat is missing the required property HatSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightHat is not null && appearanceModel.RightHat.HatSize is null)
                     {
-                        Monitor.Log($"Unable to add hat for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightHat is missing the required property HatSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightHat is missing the required property HatSize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "hat.png")))
                     {
-                        Monitor.Log($"Unable to add hat for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated hat.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add hat for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated hat.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -752,7 +751,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading hats from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading hats from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -763,14 +762,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shirts"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Shirts folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Shirts folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var shirtFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (shirtFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Shirts for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Shirts for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -781,7 +780,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a shirt.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + "is missing a shirt.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -798,7 +797,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add shirts from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirts from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -813,43 +812,43 @@ namespace FashionSense
                     // Verify that a shirt with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<ShirtContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add shirt from {contentPack.Manifest.Name}: This pack already contains a shirt with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt from " + contentPack.Manifest.Name + ": This pack already contains a shirt with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one ShirtModel is given
                     if (appearanceModel.BackShirt is null && appearanceModel.RightShirt is null && appearanceModel.FrontShirt is null && appearanceModel.LeftShirt is null)
                     {
-                        Monitor.Log($"Unable to add shirt for {appearanceModel.Name} from {contentPack.Manifest.Name}: No shirt models given (FrontShirt, BackShirt, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No shirt models given (FrontShirt, BackShirt, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontShirt is not null && appearanceModel.FrontShirt.ShirtSize is null)
                     {
-                        Monitor.Log($"Unable to add shirt for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontShirt is missing the required property ShirtSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontShirt is missing the required property ShirtSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackShirt is not null && appearanceModel.BackShirt.ShirtSize is null)
                     {
-                        Monitor.Log($"Unable to add shirt for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackShirt is missing the required property ShirtSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackShirt is missing the required property ShirtSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftShirt is not null && appearanceModel.LeftShirt.ShirtSize is null)
                     {
-                        Monitor.Log($"Unable to add shirt for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftShirt is missing the required property ShirtSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftShirt is missing the required property ShirtSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightShirt is not null && appearanceModel.RightShirt.ShirtSize is null)
                     {
-                        Monitor.Log($"Unable to add shirt for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightShirt is missing the required property ShirtSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightShirt is missing the required property ShirtSize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "shirt.png")))
                     {
-                        Monitor.Log($"Unable to add shirt for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated shirt.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add shirt for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated shirt.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -868,7 +867,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading shirts from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading shirts from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -880,14 +879,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Pants"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Pants folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Pants folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var pantsFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (pantsFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Pants for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Pants for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -898,7 +897,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a pants.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + "is missing a pants.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -915,7 +914,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add pants from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -930,43 +929,43 @@ namespace FashionSense
                     // Verify that a pants with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<PantsContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add pants from {contentPack.Manifest.Name}: This pack already contains a pants with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants from " + contentPack.Manifest.Name + ": This pack already contains a pants with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one PantsModel is given
                     if (appearanceModel.BackPants is null && appearanceModel.RightPants is null && appearanceModel.FrontPants is null && appearanceModel.LeftPants is null)
                     {
-                        Monitor.Log($"Unable to add pants for {appearanceModel.Name} from {contentPack.Manifest.Name}: No pants models given (FrontPants, BackPants, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No pants models given (FrontPants, BackPants, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontPants is not null && appearanceModel.FrontPants.PantsSize is null)
                     {
-                        Monitor.Log($"Unable to add pants for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontPants is missing the required property PantsSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontPants is missing the required property PantsSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackPants is not null && appearanceModel.BackPants.PantsSize is null)
                     {
-                        Monitor.Log($"Unable to add pants for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackPants is missing the required property PantsSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackPants is missing the required property PantsSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftPants is not null && appearanceModel.LeftPants.PantsSize is null)
                     {
-                        Monitor.Log($"Unable to add pants for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftPants is missing the required property PantsSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftPants is missing the required property PantsSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightPants is not null && appearanceModel.RightPants.PantsSize is null)
                     {
-                        Monitor.Log($"Unable to add pants for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightPants is missing the required property PantsSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightPants is missing the required property PantsSize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "pants.png")))
                     {
-                        Monitor.Log($"Unable to add pants for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated pants.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add pants for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated pants.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -985,7 +984,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading pants from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading pants from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -997,14 +996,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Sleeves"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Sleeves folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Sleeves folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var sleevesFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (sleevesFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Sleeves for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Sleeves for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -1015,7 +1014,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a sleeves.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + "is missing a sleeves.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -1032,7 +1031,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add sleeves from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -1047,43 +1046,43 @@ namespace FashionSense
                     // Verify that a sleeves with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<SleevesContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add sleeves from {contentPack.Manifest.Name}: This pack already contains a sleeves with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves from " + contentPack.Manifest.Name + ": This pack already contains a sleeves with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one SleevesModel is given
                     if (appearanceModel.BackSleeves is null && appearanceModel.RightSleeves is null && appearanceModel.FrontSleeves is null && appearanceModel.LeftSleeves is null)
                     {
-                        Monitor.Log($"Unable to add sleeves for {appearanceModel.Name} from {contentPack.Manifest.Name}: No sleeves models given (FrontSleeves, BackSleeves, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No sleeves models given (FrontSleeves, BackSleeves, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontSleeves is not null && appearanceModel.FrontSleeves.SleevesSize is null)
                     {
-                        Monitor.Log($"Unable to add sleeves for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontSleeves is missing the required property SleevesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontSleeves is missing the required property SleevesSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackSleeves is not null && appearanceModel.BackSleeves.SleevesSize is null)
                     {
-                        Monitor.Log($"Unable to add sleeves for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackSleeves is missing the required property SleevesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackSleeves is missing the required property SleevesSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftSleeves is not null && appearanceModel.LeftSleeves.SleevesSize is null)
                     {
-                        Monitor.Log($"Unable to add sleeves for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftSleeves is missing the required property SleevesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftSleeves is missing the required property SleevesSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightSleeves is not null && appearanceModel.RightSleeves.SleevesSize is null)
                     {
-                        Monitor.Log($"Unable to add sleeves for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightSleeves is missing the required property SleevesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightSleeves is missing the required property SleevesSize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "sleeves.png")))
                     {
-                        Monitor.Log($"Unable to add sleeves for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated sleeves.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add sleeves for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated sleeves.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -1102,7 +1101,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading sleeves from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading sleeves from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -1114,14 +1113,14 @@ namespace FashionSense
                 var directoryPath = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shoes"));
                 if (!directoryPath.Exists)
                 {
-                    Monitor.Log($"No Shoes folder found for the content pack {contentPack.Manifest.Name}", LogLevel.Trace);
+                    Monitor.Log("No Shoes folder found for the content pack " + contentPack.Manifest.Name, LogLevel.Trace);
                     return;
                 }
 
                 var shoesFolders = directoryPath.GetDirectories("*", SearchOption.AllDirectories);
                 if (shoesFolders.Count() == 0)
                 {
-                    Monitor.Log($"No sub-folders found under Shoes for the content pack {contentPack.Manifest.Name}", LogLevel.Warn);
+                    Monitor.Log("No sub-folders found under Shoes for the content pack " + contentPack.Manifest.Name, LogLevel.Warn);
                     return;
                 }
 
@@ -1132,7 +1131,7 @@ namespace FashionSense
                     {
                         if (textureFolder.GetDirectories().Count() == 0)
                         {
-                            Monitor.Log($"Content pack {contentPack.Manifest.Name} is missing a shoes.json under {textureFolder.Name}", LogLevel.Warn);
+                            Monitor.Log("Content pack " + contentPack.Manifest.Name + "is missing a shoes.json under " + textureFolder.Name, LogLevel.Warn);
                         }
 
                         continue;
@@ -1149,7 +1148,7 @@ namespace FashionSense
                     // Verify the required Name property is set
                     if (String.IsNullOrEmpty(appearanceModel.Name))
                     {
-                        Monitor.Log($"Unable to add shoes from {appearanceModel.Owner}: Missing the Name property", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes from " + appearanceModel.Owner + ": Missing the Name property", LogLevel.Warn);
                         continue;
                     }
 
@@ -1164,43 +1163,43 @@ namespace FashionSense
                     // Verify that a shoes with the name doesn't exist in this pack
                     if (textureManager.GetSpecificAppearanceModel<ShoesContentPack>(appearanceModel.Id) != null)
                     {
-                        Monitor.Log($"Unable to add shoes from {contentPack.Manifest.Name}: This pack already contains a shoes with the name of {appearanceModel.Name}", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes from " + contentPack.Manifest.Name + ": This pack already contains a shoes with the name of " + appearanceModel.Name, LogLevel.Warn);
                         continue;
                     }
 
                     // Verify that at least one ShoesModel is given
                     if (appearanceModel.BackShoes is null && appearanceModel.RightShoes is null && appearanceModel.FrontShoes is null && appearanceModel.LeftShoes is null)
                     {
-                        Monitor.Log($"Unable to add shoes for {appearanceModel.Name} from {contentPack.Manifest.Name}: No shoes models given (FrontShoes, BackShoes, etc.)", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No shoes models given (FrontShoes, BackShoes, etc.)", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify the Size model is not null foreach given direction
                     if (appearanceModel.FrontShoes is not null && appearanceModel.FrontShoes.ShoesSize is null)
                     {
-                        Monitor.Log($"Unable to add shoes for {appearanceModel.Name} from {contentPack.Manifest.Name}: FrontShoes is missing the required property ShoesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": FrontShoes is missing the required property ShoesSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.BackShoes is not null && appearanceModel.BackShoes.ShoesSize is null)
                     {
-                        Monitor.Log($"Unable to add shoes for {appearanceModel.Name} from {contentPack.Manifest.Name}: BackShoes is missing the required property ShoesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": BackShoes is missing the required property ShoesSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.LeftShoes is not null && appearanceModel.LeftShoes.ShoesSize is null)
                     {
-                        Monitor.Log($"Unable to add shoes for {appearanceModel.Name} from {contentPack.Manifest.Name}: LeftShoes is missing the required property ShoesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": LeftShoes is missing the required property ShoesSize", LogLevel.Warn);
                         continue;
                     }
                     if (appearanceModel.RightShoes is not null && appearanceModel.RightShoes.ShoesSize is null)
                     {
-                        Monitor.Log($"Unable to add shoes for {appearanceModel.Name} from {contentPack.Manifest.Name}: RightShoes is missing the required property ShoesSize", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": RightShoes is missing the required property ShoesSize", LogLevel.Warn);
                         continue;
                     }
 
                     // Verify we are given a texture and if so, track it
                     if (!File.Exists(Path.Combine(textureFolder.FullName, "shoes.png")))
                     {
-                        Monitor.Log($"Unable to add shoes for {appearanceModel.Name} from {contentPack.Manifest.Name}: No associated shoes.png given", LogLevel.Warn);
+                        Monitor.Log("Unable to add shoes for " + appearanceModel.Name + " from " + contentPack.Manifest.Name + ": No associated shoes.png given", LogLevel.Warn);
                         continue;
                     }
 
@@ -1219,7 +1218,7 @@ namespace FashionSense
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error loading shoes from content pack {contentPack.Manifest.Name}: {ex}", LogLevel.Error);
+                Monitor.Log("Error loading shoes from content pack " + contentPack.Manifest.Name + ": " + ex, LogLevel.Error);
             }
         }
 
@@ -1318,8 +1317,8 @@ namespace FashionSense
                 }
                 catch (Exception ex)
                 {
-                    monitor.Log($"Failed to load accessory data for {farmer.Name}, see the log for details.", LogLevel.Warn);
-                    monitor.Log($"Failed to load accessory data for {farmer.Name}: {ex}", LogLevel.Trace);
+                    monitor.Log("Failed to load accessory data for " + farmer.Name + ", see the log for details.", LogLevel.Warn);
+                    monitor.Log("Failed to load accessory data for " + farmer.Name + ":" + ex, LogLevel.Trace);
                 }
             }
         }

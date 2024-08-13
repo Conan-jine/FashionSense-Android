@@ -34,7 +34,7 @@ namespace FashionSense.Framework.Models.Appearances
         public List<ColorMaskLayer> ColorMaskLayers { get; set; } = new List<ColorMaskLayer>();
         public List<int[]> ColorMasks
         {
-            set { ColorMaskLayers.Insert(0, new ColorMaskLayer() { Name = $"{FashionSense.modHelper.Translation.Get("ui.fashion_sense.mask_layer.base")} {FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_active.generic")}", Values = value }); }
+            set { ColorMaskLayers.Insert(0, new ColorMaskLayer() { Name = FashionSense.modHelper.Translation.Get("ui.fashion_sense.mask_layer.base")+" "+FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_active.generic"), Values = value }); }
         }
         public SkinToneModel SkinToneMasks { get; set; }
         public List<AppearanceSync> AppearanceSyncing { get; set; } = new List<AppearanceSync>();
@@ -246,7 +246,7 @@ namespace FashionSense.Framework.Models.Appearances
 
         internal static string GetColorKey(IApi.Type type, int appearanceIndex = 0, int maskLayerIndex = 0)
         {
-            return $"FashionSense.{(type is IApi.Type.Accessory ? "CustomAccessory" : type)}.{appearanceIndex}.Color.{maskLayerIndex}.Mask";
+            return "FashionSense."+(type is IApi.Type.Accessory ? "CustomAccessory" : type)+"."+appearanceIndex+".Color."+maskLayerIndex+".Mask";
         }
 
         internal static int GetColorIndex(int[] colorArray, int position)

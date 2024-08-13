@@ -45,7 +45,7 @@ namespace FashionSense.Framework.Models.Appearances
             }
             catch (Exception ex)
             {
-                FashionSense.monitor.Log($"Failed to restore cached texture: {ex}", StardewModdingAPI.LogLevel.Trace);
+                FashionSense.monitor.Log("Failed to restore cached texture: "+ex, StardewModdingAPI.LogLevel.Trace);
                 return false;
             }
 

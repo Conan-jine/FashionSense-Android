@@ -603,7 +603,7 @@ namespace FashionSense.Framework.Utilities
             foreach (var condition in conditions)
             {
                 var passedCheck = false;
-                string groupKey = $"{model.Pack.PackId}.{condition.GroupName}".ToLower();
+                string groupKey = model.Pack.PackId+"."+condition.GroupName+"".ToLower();
                 if (FashionSense.conditionGroups.ContainsKey(groupKey))
                 {
                     passedCheck = condition.IsValid(AreConditionsValid(FashionSense.conditionGroups[groupKey].Conditions, currentSingleAnimation, who, model, animations, iterator, probe));

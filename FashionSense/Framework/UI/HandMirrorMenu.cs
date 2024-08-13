@@ -395,15 +395,15 @@ namespace FashionSense.Framework.UI
             var separator = isCompact ? "\n" : " ";
             if (isDisabled)
             {
-                return $"{FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_active.generic")}{separator}{FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_disabled.generic")}:";
+                return ""+FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_active.generic")+""+separator+""+FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_disabled.generic")+":";
             }
 
             if (GetActiveModel() is not null && GetActiveModel().ColorMaskLayers.Count > currentColorMaskLayerIndex && String.IsNullOrEmpty(GetActiveModel().ColorMaskLayers[currentColorMaskLayerIndex].Name) is false)
             {
-                return $"{GetActiveModel().ColorMaskLayers[currentColorMaskLayerIndex].Name}:";
+                return ""+GetActiveModel().ColorMaskLayers[currentColorMaskLayerIndex].Name+":";
             }
 
-            return $"{FashionSense.modHelper.Translation.Get("ui.fashion_sense.mask_layer.base")} {FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_active.generic")}:";
+            return ""+FashionSense.modHelper.Translation.Get("ui.fashion_sense.mask_layer.base")+" "+FashionSense.modHelper.Translation.Get("ui.fashion_sense.color_active.generic")+":";
         }
 
         internal void SetFilter(string filterName, AppearanceContentPack appearancePack)

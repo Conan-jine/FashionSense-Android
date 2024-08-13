@@ -51,7 +51,7 @@ namespace FashionSense.Framework.Patches.Core
             }
             catch (System.Exception e)
             {
-                _monitor.Log($"There was an issue modifying the instructions for StardewValley.Game1.drawTool: {e}", LogLevel.Error);
+                _monitor.Log("There was an issue modifying the instructions for StardewValley.Game1.drawTool: "+e+"", LogLevel.Error);
                 return instructions;
             }
         }

@@ -53,7 +53,7 @@ namespace FashionSense.Framework.External.ContentPatcher
 
             if (!_validInputs.Contains(input, StringComparer.OrdinalIgnoreCase))
             {
-                error = $"No matching appearance node under the name of: {input}";
+                error = "No matching appearance node under the name of: "+ input;
                 return false;
             }
 

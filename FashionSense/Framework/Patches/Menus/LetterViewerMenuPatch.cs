@@ -43,18 +43,16 @@ namespace FashionSense.Framework.Patches.Menus
         [HarmonyPriority(Priority.High)]
         private static bool ReceiveLeftClickPrefix(LetterViewerMenu __instance, int x, int y, bool playSound = true)
         {
-            if (__instance is not null && __instance.ShouldShowInteractable())
+            foreach (ClickableComponent c in __instance.itemsToGrab)
             {
-                foreach (ClickableComponent c in __instance.itemsToGrab)
+                if (c.containsPoint(x, y) && c.item is not null && c.item.modData.ContainsKey(ModDataKeys.HAND_MIRROR_FLAG))
                 {
-                    if (c.containsPoint(x, y) && c.item is not null && c.item.modData.ContainsKey(ModDataKeys.HAND_MIRROR_FLAG))
-                    {
-                        Game1.playSound("coin");
-                        Game1.player.addItemToInventory(c.item);
-                        c.item = null;
-                    }
+                    Game1.playSound("coin");
+                    Game1.player.addItemToInventory(c.item);
+                    c.item = null;
                 }
             }
+            
 
             return true;
         }
